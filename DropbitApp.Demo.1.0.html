@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Twin - Water Management SCADA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Estilos personalizados para la estética Dark Tech / SCADA Premium */
+        :root {
+            --bg-main: #0a0d14;
+            --bg-card: #161b22;
+            --border-color: #30363d;
+            --accent-cyan: #00f2fe;
+            --accent-green: #39ff14;
+            --accent-red: #ff1744;
+            --accent-orange: #ff9100;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: #e6edf3;
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden; /* Evita el scroll general */
+            height: 100vh;
+        }
+
+        .font-digital {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Contenedores estilo SCADA */
+        .scada-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .scada-card:hover, .scada-card.active {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+        }
+
+        /* Efecto de parpadeo para alarmas críticas */
+        .blink-red {
+            animation: blinker-red 1.5s linear infinite;
+        }
+        @keyframes blinker-red {
+            50% {
+                opacity: 0.4;
+                box-shadow: 0 0 10px rgba(255, 23, 68, 0.5);
+                border-color: var(--accent-red);
+            }
+        }
+
+        /* Barra de desplazamiento personalizada para paneles internos si se requiere */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d1117;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #30363d;
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+    </style>
+</head>
+<body class="p-4 flex flex-col justify-between h-screen gap-4">
+
+    <header class="h-[6vh] scada-card flex items-center justify-between px-6 border-b border-[#30363d]">
+        <div class="flex items-center gap-3">
+            <div class="w-3 h-3 rounded-full bg-[#39ff14] animate-pulse"></div>
+            <h1 class="text-xl font-bold tracking-wider text-white uppercase flex items-center gap-2">
+                H2O-TWIN <span class="text-xs text-cyan-400 border border-cyan-400 px-1.5 py-0.5 rounded font-digital">SYS OPERATIONAL</span>
+            </h1>
+        </div>
+        <div class="flex items-center gap-6 text-sm text-gray-400 font-digital">
+            <div>TELEMETRÍA: <span class="text-green-400">ONLINE</span></div>
+            <div>REFRESH: <span id="sync-time">0.0s ago</span></div>
+            <div id="live-clock" class="text-white font-bold">00:00:00</div>
+        </div>
+    </header>
+
+    <main class="h-[88vh] flex gap-4 w-full">
+        
+        <section class="w-[28%] flex flex-col justify-between h-full gap-4">
+            
+            <div class="flex flex-col gap-3 h-[45%]">
+                <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase flex items-center gap-2">
+                    <span>//</span> METRICAS EN TIEMPO REAL
+                </h2>
+                
+                <div class="scada-card p-4 flex flex-col justify-between flex-1 relative overflow-hidden group">
+                    <div class="text-xs text-gray-400 font-semibold tracking-wider">CONSUMO ACTUAL</div>
+                    <div class="flex justify-between items-baseline mt-1">
+                        <span id="kpi-flow" class="text-3xl font-bold text-cyan-400 font-digital tracking-tight">42.5</span>
+                        <span class="text-sm text-cyan-600 font-digital">L/s</span>
+                    </div>
+                    <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden mt-2">
+                        <div id="bar-flow" class="bg-cyan-400 h-full transition-all duration-500" style="width: 65%"></div>
+                    </div>
+                </div>
+
+                <div class="scada-card p-4 flex flex-col justify-between flex-1">
+                    <div class="text-xs text-gray-400 font-semibold tracking-wider">VOLUMEN ACUMULADO DIARIO</div>
+                    <div class="flex justify-between items-baseline mt-1">
+                        <span id="kpi-volume" class="text-3xl font-bold text-emerald-400 font-digital tracking-tight">1,248.3</span>
+                        <span class="text-sm text-emerald-600 font-digital">m³</span>
+                    </div>
+                    <span class="text-[10px] text-gray-500 mt-1">META DIARIA ESTIMADA: 2,500 m³</span>
+                </div>
+
+                <div class="scada-card p-4 flex flex-col justify-between flex-1">
+                    <div class="text-xs text-gray-400 font-semibold tracking-wider">EFICIENCIA DEL SISTEMA</div>
+                    <div class="flex justify-between items-baseline mt-1">
+                        <span id="kpi-efficiency" class="text-3xl font-bold text-[#39ff14] font-digital tracking-tight">96.8</span>
+                        <span class="text-sm text-emerald-600 font-digital">%</span>
+                    </div>
+                    <div class="text-[10px] text-emerald-400 flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#39ff14]"></span> RANGO ÓPTIMO OPERACIONAL
+                    </div>
+                </div>
+            </div>
+
+            <div class="scada-card p-4 h-[33%] flex flex-col justify-between">
+                <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2"><span>//</span> EQUIVALENCIAS ASOCIADAS</h2>
+                
+                <div class="grid grid-cols-3 gap-2 text-center h-full items-center">
+                    <div class="flex flex-col items-center border-r border-[#30363d] px-1">
+                        <span class="text-xs text-cyan-400 font-semibold mb-1">AGUA</span>
+                        <span id="eq-water" class="text-md font-bold text-white font-digital">1.0 m³</span>
+                        <span class="text-[10px] text-gray-500">Unidad Base</span>
+                    </div>
+                    <div class="flex flex-col items-center border-r border-[#30363d] px-1">
+                        <span class="text-xs text-yellow-500 font-semibold mb-1">ENERGÍA</span>
+                        <span id="eq-energy" class="text-md font-bold text-yellow-400 font-digital">0.45 kW</span>
+                        <span class="text-[10px] text-gray-500">Bombeo</span>
+                    </div>
+                    <div class="flex flex-col items-center px-1">
+                        <span class="text-xs text-emerald-500 font-semibold mb-1">COSTO</span>
+                        <span id="eq-cost" class="text-md font-bold text-[#39ff14] font-digital">$2.15</span>
+                        <span class="text-[10px] text-gray-500">USD Est.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scada-card p-4 h-[22%] flex flex-col overflow-hidden">
+                <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2 flex justify-between">
+                    <span>// PANEL DE ALERTAS</span>
+                    <span class="text-[#ff1744] animate-pulse font-digital text-[10px]">LIVE</span>
+                </h2>
+                <div class="overflow-y-auto flex flex-col gap-2 flex-1 presentation-mode-zone">
+                    <div class="blink-red border border-[#ff1744] bg-[rgba(255,23,68,0.05)] rounded p-2 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[#ff1744] font-bold">⚠️ CRIT</span>
+                            <span class="text-gray-300">Micro-fuga detectada en Bloque B</span>
+                        </div>
+                        <span class="text-gray-500 font-digital">11:42</span>
+                    </div>
+                    <div class="border border-[#ff9100] bg-[rgba(255,145,0,0.05)] rounded p-2 flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[#ff9100] font-bold">⚡ WARN</span>
+                            <span class="text-gray-300">Presión elevada en Bomba Principal</span>
+                        </div>
+                        <span class="text-gray-500 font-digital">10:15</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="w-[72%] flex flex-col justify-between h-full gap-4">
+            
+            <div class="scada-card h-[63%] relative overflow-hidden flex flex-col">
+                <div class="absolute top-3 left-4 z-10 bg-[rgba(10,13,20,0.85)] border border-[#30363d] px-3 py-1 rounded text-xs flex items-center gap-2 backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span class="text-gray-400 font-semibold tracking-wider">VISTA 3D: DIGITAL TWIN DE LA INSTALACIÓN</span>
+                </div>
+                
+                <div class="w-full h-full flex-1">
+                    <iframe 
+                        src="https://3dwarehouse.sketchup.com/embed/8b9a48eb-050f-473f-a63a-1bdafd7673b3?token=rkszB9Ao71Q=&binaryName=s21" 
+                        frameborder="0" 
+                        scrolling="no" 
+                        marginheight="0" 
+                        marginwidth="0" 
+                        class="w-full h-full border-0"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="scada-card h-[37%] p-4 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase"><span>//</span> HISTÓRICO DE CONSUMO DIARIO (L/s por Hora)</h2>
+                    <div class="flex gap-4 text-[11px] text-gray-400 font-digital">
+                        <div>MÁX: <span class="text-cyan-400">54.2 L/s</span></div>
+                        <div>MÍN: <span class="text-gray-400">28.9 L/s</span></div>
+                        <div>PROM: <span class="text-emerald-400">41.1 L/s</span></div>
+                    </div>
+                </div>
+                <div class="flex-1 w-full relative min-h-0">
+                    <canvas id="historicalChart"></canvas>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- 1. CONFIGURACIÓN DEL RELOJ EN TIEMPO REAL ---
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toTimeString().split(' ')[0];
+            document.getElementById('live-clock').textContent = timeString;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // --- 2. CONFIGURACIÓN DE CHART.JS (Gráfico Histórico con Gradiente Glow) ---
+        const ctx = document.getElementById('historicalChart').getContext('2d');
+        
+        // Creación del Gradiente para el Efecto Glow inferior
+        const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+        gradient.addColorStop(0, 'rgba(0, 242, 254, 0.3)');
+        gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
+
+        // Datos Iniciales (Simulación de las 12 primeras horas del día)
+        const labels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+        const dataValues = [32, 29, 31, 45, 52, 48, 42, 46, 49, 41, 38, 35];
+
+        const historicalChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Flujo de Agua',
+                    data: dataValues,
+                    borderColor: '#00f2fe',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#00f2fe',
+                    pointBorderColor: '#0a0d14',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#00f2fe',
+                    pointRadius: 3,
+                    tension: 0.4, // Suavizado de línea
+                    fill: true,
+                    backgroundColor: gradient
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    x: {
+                        grid: { color: '#1f2937', drawTicks: false },
+                        ticks: { color: '#9ca3af', font: { family: 'Rajdhani', size: 11 } }
+                    },
+                    y: {
+                        grid: { color: '#1f2937', drawTicks: false },
+                        ticks: { color: '#9ca3af', font: { family: 'Orbitron', size: 10 } },
+                        min: 20,
+                        max: 65
+                    }
+                }
+            }
+        });
+
+        // --- 3. SIMULACIÓN DE DATOS VIVOS EN TIEMPO REAL (setInterval) ---
+        let baseVolume = 1248.3;
+        let elapsedSeconds = 0;
+
+        setInterval(() => {
+            // A. Simulación de Fluctuación de flujo (L/s)
+            const currentFlow = (40 + (Math.random() * 6 - 3)).toFixed(1);
+            document.getElementById('kpi-flow').textContent = currentFlow;
+            
+            // Ajustar dinámicamente la barra visual de progreso del flujo
+            const percentFlow = ((currentFlow / 65) * 100).toFixed(0);
+            document.getElementById('bar-flow').style.width = `${percentFlow}%`;
+
+            // B. Incremento acumulado del volumen diario
+            // Suma una cantidad proporcional simulada cada segundo
+            baseVolume += (parseFloat(currentFlow) / 1000);
+            document.getElementById('kpi-volume').textContent = baseVolume.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
+
+            // C. Variación sutil de la eficiencia global (%)
+            const currentEfficiency = (96.5 + (Math.random() * 0.6 - 0.3)).toFixed(1);
+            document.getElementById('kpi-efficiency').textContent = currentEfficiency;
+
+            // D. Actualización Dinámica del Módulo de Conversión en base al Flujo Actual
+            // Suponemos que 1 m3/s requiere cierta potencia y genera un coste
+            const waterUnit = (parseFloat(currentFlow) / 40).toFixed(2);
+            document.getElementById('eq-water').textContent = `${waterUnit} m³`;
+            document.getElementById('eq-energy').textContent = `${(waterUnit * 0.45).toFixed(2)} kW`;
+            document.getElementById('eq-cost').textContent = `$${(waterUnit * 2.15).toFixed(2)}`;
+
+            // E. Modificar en tiempo real el último punto del gráfico de Chart.js para dar sensación de dinamismo vivo
+            const lastIndex = historicalChart.data.datasets[0].data.length - 1;
+            historicalChart.data.datasets[0].data[lastIndex] = parseFloat(currentFlow);
+            historicalChart.update('none'); // Update sin reiniciar animación para fluidez
+
+            // F. Contador de sincronización
+            elapsedSeconds = 0;
+        }, 2000);
+
+        // Actualizador del letrero de refresco de telemetría por segundo
+        setInterval(() => {
+            elapsedSeconds += 0.5;
+            document.getElementById('sync-time').textContent = `${elapsedSeconds.toFixed(1)}s ago`;
+        }, 500);
+
+    </script>
+</body>
+</html>

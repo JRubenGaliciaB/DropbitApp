@@ -294,83 +294,69 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-// --- 2. CONFIGURACIÓN DE CHART.JS ---
+// --- 2. CONFIGURACIÓN DE CHART.JS (Gráfico Histórico con Gradiente Glow) ---
 const ctx = document.getElementById('historicalChart').getContext('2d');
-// ... (tu código del gradiente se mantiene igual)
+
+// Creación del Gradiente para el Efecto Glow inferior
+const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+gradient.addColorStop(0, 'rgba(0, 242, 254, 0.3)');
+gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
+
+// Datos Iniciales
+const labels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+const dataValues = [32, 29, 31, 45, 52, 48, 42, 46, 49, 41, 38, 35];
 
 const historicalChart = new Chart(ctx, {
     type: 'line',
-    data: { /* tus datos */ },
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Flujo de Agua',
+            data: dataValues,
+            borderColor: '#00f2fe',
+            borderWidth: 2,
+            pointBackgroundColor: '#00f2fe',
+            pointBorderColor: '#0a0d14',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#00f2fe',
+            pointRadius: 3,
+            tension: 0.4,
+            fill: true,
+            backgroundColor: gradient
+        }]
+    },
     options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
-            // AQUÍ AGREGAS LA NAVEGABILIDAD
+            // AQUI ESTA LA CONFIGURACION DE ZOOM CORRECTA
             zoom: {
                 zoom: {
-                    wheel: { enabled: true }, // Zoom con scroll
-                    pinch: { enabled: true }, // Zoom con dedos en touch
-                    mode: 'x',              // Solo zoom horizontal
+                    wheel: { enabled: true },
+                    pinch: { enabled: true },
+                    mode: 'x',
                 },
                 pan: {
-                    enabled: true,          // Arrastrar el gráfico
-                    mode: 'x',              // Solo movimiento horizontal
+                    enabled: true,
+                    mode: 'x',
                 }
             }
         },
-        scales: { /* tus escalas */ }
+        scales: {
+            x: {
+                grid: { color: '#1f2937', drawTicks: false },
+                ticks: { color: '#9ca3af', font: { family: 'Rajdhani', size: 11 } }
+            },
+            y: {
+                grid: { color: '#1f2937', drawTicks: false },
+                ticks: { color: '#9ca3af', font: { family: 'Orbitron', size: 10 } },
+                min: 20,
+                max: 65
+            }
+        }
     }
 });
-
-        // Creación del Gradiente para el Efecto Glow inferior
-        const gradient = ctx.createLinearGradient(0, 0, 0, 180);
-        gradient.addColorStop(0, 'rgba(0, 242, 254, 0.3)');
-        gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
-
-        // Datos Iniciales (Simulación de las 12 primeras horas del día)
-        const labels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-        const dataValues = [32, 29, 31, 45, 52, 48, 42, 46, 49, 41, 38, 35];
-
-        const historicalChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Flujo de Agua',
-                    data: dataValues,
-                    borderColor: '#00f2fe',
-                    borderWidth: 2,
-                    pointBackgroundColor: '#00f2fe',
-                    pointBorderColor: '#0a0d14',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: '#00f2fe',
-                    pointRadius: 3,
-                    tension: 0.4, // Suavizado de línea
-                    fill: true,
-                    backgroundColor: gradient
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    x: {
-                        grid: { color: '#1f2937', drawTicks: false },
-                        ticks: { color: '#9ca3af', font: { family: 'Rajdhani', size: 11 } }
-                    },
-                    y: {
-                        grid: { color: '#1f2937', drawTicks: false },
-                        ticks: { color: '#9ca3af', font: { family: 'Orbitron', size: 10 } },
-                        min: 20,
-                        max: 65
-                    }
-                }
-            }
-        });
 
         // --- 3. SIMULACIÓN DE DATOS VIVOS EN TIEMPO REAL (setInterval) ---
         let baseVolume = 1248.3;

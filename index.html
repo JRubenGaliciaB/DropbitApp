@@ -10,10 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-    
-
+ 
     <style>
-        /* Estilos personalizados para la estética Dark Tech / SCADA Premium */
         :root {
             --bg-main: #0a0d14;
             --bg-card: #161b22;
@@ -23,20 +21,17 @@
             --accent-red: #ff1744;
             --accent-orange: #ff9100;
         }
-
+ 
         body {
             background-color: var(--bg-main);
             color: #e6edf3;
             font-family: 'Rajdhani', sans-serif;
-            overflow: hidden; /* Evita el scroll general */
+            overflow: hidden;
             height: 100vh;
         }
-
-        .font-digital {
-            font-family: 'Orbitron', sans-serif;
-        }
-
-        /* Contenedores estilo SCADA */
+ 
+        .font-digital { font-family: 'Orbitron', sans-serif; }
+ 
         .scada-card {
             background-color: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -44,16 +39,13 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
             transition: all 0.3s ease;
         }
-
+ 
         .scada-card:hover, .scada-card.active {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
         }
-
-        /* Efecto de parpadeo para alarmas críticas */
-        .blink-red {
-            animation: blinker-red 1.5s linear infinite;
-        }
+ 
+        .blink-red { animation: blinker-red 1.5s linear infinite; }
         @keyframes blinker-red {
             50% {
                 opacity: 0.4;
@@ -61,37 +53,23 @@
                 border-color: var(--accent-red);
             }
         }
-
-        /* Barra de desplazamiento personalizada para paneles internos si se requiere */
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0d1117;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #30363d;
-            border-radius: 2px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-cyan);
-        }
-
-        /* Estilos del overlay de bienvenida (antes en el primer documento) */
+ 
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0d1117; }
+        ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+ 
         #welcome-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
             background: rgba(0,0,0,0.7);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 10000;
         }
-
+ 
         .popup-card {
             width: 20%;
             min-width: 350px;
@@ -102,7 +80,7 @@
             text-align: center;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-
+ 
         .btn-option {
             background-color: #36a0d2;
             color: white;
@@ -115,12 +93,11 @@
             border: none;
             transition: 0.3s;
         }
-
         .btn-option:hover { background-color: #2b82ab; }
     </style>
 </head>
 <body class="p-4 flex flex-col justify-between h-screen gap-4">
-
+ 
     <!-- Popup de bienvenida / selección de caso -->
     <div id="welcome-overlay">
         <div class="popup-card">
@@ -129,74 +106,228 @@
             <p class="text-xs text-gray-600 mb-6 leading-relaxed">
                 Bienvenido al futuro de la eficiencia hídrica. Con la inteligencia artificial y los sensores IoT de Dropbit, controla tu red en tiempo real, detecta fugas antes de que ocurran y asegura la continuidad de tu operación desde tu gemelo digital.
             </p>
-
+ 
             <p class="text-xs font-bold text-gray-800 mb-3">Conoce nuestros casos de uso</p>
-
+ 
             <button class="btn-option" id="btn-res">Residencial</button>
-            <button class="btn-option">Comercial</button>
-            <button class="btn-option">Industrial (Data Center)</button>
+            <button class="btn-option" id="btn-com">Comercial</button>
+            <button class="btn-option" id="btn-ind">Industrial (Data Center)</button>
         </div>
     </div>
-
+ 
     <header class="h-[6vh] scada-card flex items-center justify-between px-6 border-b border-[#30363d]">
         <div class="flex items-center gap-3">
             <div class="w-3 h-3 rounded-full bg-[#39ff14] animate-pulse"></div>
             <h1 class="text-xl font-bold tracking-wider text-white uppercase flex items-center gap-2">
                 Dropbit <span class="text-xs text-cyan-400 border border-cyan-400 px-1.5 py-0.5 rounded font-digital">Demo App</span>
+                <span id="mode-badge" class="text-[10px] text-gray-400 border border-gray-600 px-1.5 py-0.5 rounded font-digital uppercase tracking-widest">RESIDENCIAL</span>
             </h1>
         </div>
         <div class="flex items-center gap-6 text-sm text-gray-400 font-digital">
             <div>TELEMETRÍA: <span class="text-green-400">ONLINE</span></div>
             <div>REFRESH: <span id="sync-time">0.0s ago</span></div>
             <div id="live-clock" class="text-white font-bold">00:00:00</div>
+            <button id="btn-reopen" class="text-[10px] border border-gray-600 rounded px-2 py-1 text-gray-400 hover:text-cyan-400 hover:border-cyan-400 transition">⟲ CAMBIAR CASO</button>
         </div>
     </header>
-
+ 
     <main class="h-[88vh] flex gap-4 w-full">
-
+ 
         <section class="w-[28%] flex flex-col justify-between h-full gap-4">
-
+ 
             <div class="flex flex-col gap-3 h-[45%]">
                 <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase flex items-center gap-2">
                     <span>//</span> METRICAS EN TIEMPO REAL
                 </h2>
-
-                <div class="scada-card p-4 flex flex-col justify-between flex-1 relative overflow-hidden group">
-                    <div class="text-xs text-gray-400 font-semibold tracking-wider">CONSUMO ACTUAL</div>
-                    <div class="flex justify-between items-baseline mt-1">
-                        <span id="kpi-flow" class="text-3xl font-bold text-cyan-400 font-digital tracking-tight">42.5</span>
-                        <span class="text-sm text-cyan-600 font-digital">L/s</span>
-                    </div>
-                    <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden mt-2">
-                        <div id="bar-flow" class="bg-cyan-400 h-full transition-all duration-500" style="width: 65%"></div>
-                    </div>
+                <div id="kpi-cards" class="flex flex-col gap-3 flex-1"></div>
+            </div>
+ 
+            <div class="scada-card p-4 h-[33%] flex flex-col justify-between">
+                <h2 id="indicators-title" class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2"><span>//</span> Indicadores principales</h2>
+                <div id="indicators-content" class="flex-1 min-h-0"></div>
+            </div>
+ 
+            <div class="scada-card p-4 h-[22%] flex flex-col overflow-hidden">
+                <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2 flex justify-between">
+                    <span>// PANEL DE ALERTAS</span>
+                    <span class="text-[#ff1744] animate-pulse font-digital text-[10px]">LIVE</span>
+                </h2>
+                <div id="alerts-list" class="overflow-y-auto flex flex-col gap-2 flex-1 presentation-mode-zone"></div>
+            </div>
+ 
+        </section>
+ 
+        <section class="w-[72%] flex flex-col justify-between h-full gap-4">
+ 
+            <div class="scada-card h-[63%] relative overflow-hidden flex flex-col">
+                <div class="absolute top-3 left-4 z-10 bg-[rgba(10,13,20,0.85)] border border-[#30363d] px-3 py-1 rounded text-xs flex items-center gap-2 backdrop-blur-sm">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                    <span class="text-gray-400 font-semibold tracking-wider">VISTA 3D: DIGITAL TWIN DE LA INSTALACIÓN</span>
                 </div>
-
-                <div class="scada-card p-4 flex flex-col justify-between flex-1">
-                    <div class="text-xs text-gray-400 font-semibold tracking-wider">VOLUMEN ACUMULADO DIARIO</div>
-                    <div class="flex justify-between items-baseline mt-1">
-                        <span id="kpi-volume" class="text-3xl font-bold text-emerald-400 font-digital tracking-tight">1,248.3</span>
-                        <span class="text-sm text-emerald-600 font-digital">m³</span>
-                    </div>
-                    <span class="text-[10px] text-gray-500 mt-1">META DIARIA ESTIMADA: 2,500 m³</span>
-                </div>
-
-                <div class="scada-card p-4 flex flex-col justify-between flex-1">
-                    <div class="text-xs text-gray-400 font-semibold tracking-wider">EFICIENCIA DEL SISTEMA</div>
-                    <div class="flex justify-between items-baseline mt-1">
-                        <span id="kpi-efficiency" class="text-3xl font-bold text-[#39ff14] font-digital tracking-tight">96.8</span>
-                        <span class="text-sm text-emerald-600 font-digital">%</span>
-                    </div>
-                    <div class="text-[10px] text-emerald-400 flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#39ff14]"></span> RANGO ÓPTIMO OPERACIONAL
-                    </div>
+ 
+                <div class="w-full h-full flex-1">
+                    <iframe id="viewer-iframe" src="https://3dwarehouse.sketchup.com/embed/c952365c-d83c-4592-be59-3189f375887d?token=SiKoPSkQb54=&binaryName=s21"
+                        frameborder="0"
+                        scrolling="no"
+                        marginheight="0"
+                        marginwidth="0"
+                        class="w-full h-full border-0"
+                        allowfullscreen>
+                    </iframe>
                 </div>
             </div>
+ 
+            <div class="scada-card h-[37%] p-4 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-1">
+                    <h2 id="chart-title" class="text-xs font-bold tracking-widest text-gray-400 uppercase"><span>//</span> HISTÓRICO DE CONSUMO DIARIO (L/s por Hora)</h2>
+                    <div class="flex gap-4 text-[11px] text-gray-400 font-digital">
+                        <div>MÁX: <span id="stat-max" class="text-cyan-400">—</span></div>
+                        <div>MÍN: <span id="stat-min" class="text-gray-400">—</span></div>
+                        <div>PROM: <span id="stat-avg" class="text-emerald-400">—</span></div>
+                    </div>
+                </div>
+                <div class="flex-1 w-full relative min-h-0">
+                    <canvas id="historicalChart"></canvas>
+                </div>
+            </div>
+ 
+        </section>
+ 
+    </main>
+ 
+    <script>
+        // ============================================================
+        // 0. CONFIGURACIÓN DE MODOS (Residencial / Comercial / Industrial)
+        // ============================================================
+        const MODES = {
+            residencial: {
+                label: 'RESIDENCIAL',
+                iframe: 'https://3dwarehouse.sketchup.com/embed/c952365c-d83c-4592-be59-3189f375887d?token=SiKoPSkQb54=&binaryName=s21',
+                chartLabel: 'HISTÓRICO DE CONSUMO DIARIO (L/s por Hora)',
+                chartUnit: 'L/s',
+                chartKpi: 'flow',
+                historicalData: [32, 29, 31, 45, 52, 48, 42, 46, 49, 41, 38, 35],
+                chartYMin: 20, chartYMax: 65,
+                kpis: [
+                    { id: 'flow', label: 'CONSUMO ACTUAL', unit: 'L/s', color: '#00f2fe', base: 42.5, variance: 3, decimals: 1, bar: true, barMax: 65 },
+                    { id: 'volume', label: 'VOLUMEN ACUMULADO DIARIO', unit: 'm³', color: '#34d399', base: 1248.3, decimals: 1, accumulate: true, driverId: 'flow', sublabel: 'META DIARIA ESTIMADA: 2,500 m³' },
+                    { id: 'efficiency', label: 'EFICIENCIA DEL SISTEMA', unit: '%', color: '#39ff14', base: 96.8, variance: 0.3, decimals: 1, sublabel: 'RANGO ÓPTIMO OPERACIONAL', sublabelColor: '#39ff14' }
+                ],
+                panelType: 'equivalence',
+                alerts: [
+                    { level: 'CRIT', text: 'Consumo anormal detectado en cuarto de servicio', time: '11:42' },
+                    { level: 'WARN', text: 'Presión elevada en Bomba Principal', time: '10:15' }
+                ]
+            },
+            comercial: {
+                label: 'COMERCIAL',
+                iframe: 'https://3dwarehouse.sketchup.com/embed/fb8af973-fc6c-465e-beea-90bd74ec6d84?token=3A2eDXktr7o=&binaryName=s21',
+                chartLabel: 'HISTÓRICO DE CONSUMO DIARIO DEL EDIFICIO (L/s por Hora)',
+                chartUnit: 'L/s',
+                chartKpi: 'flow',
+                historicalData: [38, 35, 37, 52, 60, 55, 48, 53, 57, 47, 44, 40],
+                chartYMin: 25, chartYMax: 75,
+                kpis: [
+                    { id: 'flow', label: 'CONSUMO ACTUAL DEL EDIFICIO', unit: 'L/s', color: '#00f2fe', base: 46.5, variance: 4, decimals: 1, bar: true, barMax: 75 },
+                    { id: 'volume', label: 'VOLUMEN ACUMULADO DIARIO', unit: 'm³', color: '#34d399', base: 2140.8, decimals: 1, accumulate: true, driverId: 'flow', sublabel: 'META DIARIA ESTIMADA: 4,200 m³' },
+                    { id: 'efficiency', label: 'EFICIENCIA GLOBAL', unit: '%', color: '#39ff14', base: 94.2, variance: 0.5, decimals: 1, sublabel: '3 ÁREAS BAJO MONITOREO ACTIVO', sublabelColor: '#ff9100' }
+                ],
+                panelType: 'areas',
+                areas: [
+                    { id: 'piso1', name: 'Piso 1 · Oficinas', unit: 'L/s', base: 12.5, variance: 1.5, threshold: 16 },
+                    { id: 'piso2', name: 'Piso 2 · Oficinas', unit: 'L/s', base: 11.8, variance: 1.5, threshold: 16 },
+                    { id: 'piso3', name: 'Piso 3 · Sanitarios', unit: 'L/s', base: 9.8, variance: 2.2, threshold: 11 },
+                    { id: 'verdes', name: 'Áreas Verdes / Riego', unit: 'L/s', base: 6.2, variance: 1.4, threshold: 9 },
+                    { id: 'alberca', name: 'Alberca', unit: 'L/s', base: 4.8, variance: 0.9, threshold: 6.5 },
+                    { id: 'estacionamiento', name: 'Estacionamiento', unit: 'L/s', base: 1.4, variance: 0.4, threshold: 3 }
+                ],
+                alerts: [
+                    { level: 'CRIT', text: 'Consumo anormal en Piso 3 - Sanitarios', time: '11:50' },
+                    { level: 'WARN', text: 'Riego excesivo detectado en Áreas Verdes', time: '09:30' },
+                    { level: 'WARN', text: 'Posible fuga en sistema de filtrado de Alberca', time: '08:12' }
+                ]
+            },
+            industrial: {
+                label: 'INDUSTRIAL (DATA CENTER)',
+                iframe: 'https://3dwarehouse.sketchup.com/embed/f9fee21f-a08c-496b-a3aa-5812313e9d5e?token=ToMCcvaJvCs=&binaryName=s21',
+                chartLabel: 'HISTÓRICO DE AGUA DE REPOSICIÓN (L/s por Hora)',
+                chartUnit: 'L/s',
+                chartKpi: 'makeup',
+                historicalData: [4.8, 4.5, 4.6, 5.0, 5.6, 5.9, 5.4, 5.7, 6.0, 5.5, 5.1, 4.9],
+                chartYMin: 3, chartYMax: 8,
+                kpis: [
+                    { id: 'makeup', label: 'AGUA DE REPOSICIÓN (MAKEUP WATER)', unit: 'L/s', color: '#00f2fe', base: 5.2, variance: 0.6, decimals: 2, bar: true, barMax: 9 },
+                    { id: 'volume', label: 'VOLUMEN ACUMULADO DIARIO', unit: 'm³', color: '#34d399', base: 412.6, decimals: 1, accumulate: true, driverId: 'makeup', sublabel: 'CAPACIDAD DE TRATAMIENTO: 800 m³' },
+                    { id: 'itload', label: 'CARGA IT (IT LOAD)', unit: 'kW', color: '#ff9100', base: 1850, variance: 40, decimals: 0, sublabel: 'CAPACIDAD TOTAL: 2,400 kW', sublabelColor: '#9ca3af' }
+                ],
+                panelType: 'wue',
+                wue: { base: 0.42, variance: 0.03 },
+                alerts: [
+                    { level: 'CRIT', text: 'Temperatura elevada en Torre de Enfriamiento 2', time: '12:05' },
+                    { level: 'WARN', text: 'Ciclo de purga (blowdown) activo en Chiller Principal', time: '11:20' },
+                    { level: 'WARN', text: 'Consumo de agua de reposición sobre el umbral horario', time: '10:44' }
+                ]
+            }
+        };
+ 
+        let currentMode = 'residencial';
+        let liveValues = {};
+        let historicalChart = null;
+        let elapsedSeconds = 0;
+ 
+        // ============================================================
+        // 1. RELOJ EN TIEMPO REAL
+        // ============================================================
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('live-clock').textContent = now.toTimeString().split(' ')[0];
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+ 
+        // ============================================================
+// 2. RENDERIZADO DE PANELES SEGÚN EL MODO (MODIFICADO)
+// ============================================================
+function renderKPICards(mode) {
+    const container = document.getElementById('kpi-cards');
+    container.innerHTML = mode.kpis.map(k => {
+        const decimals = k.decimals ?? 1;
+        const displayVal = k.accumulate
+            ? k.base.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+            : k.base.toFixed(decimals);
 
-            <div class="scada-card p-4 h-[33%] flex flex-col justify-between">
-                <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2"><span>//</span> Indicadores principales </h2>
+        // NUEVA LÓGICA: Identificar si es la métrica de eficiencia y aplicar clases especiales
+        const isEfficiency = k.id === 'efficiency' || k.id === 'itload';
+        const cardExtraClass = isEfficiency ? 'absolute top-0 right-0 w-1/3 h-1/2 z-20 rounded-bl-xl scada-card cursor-pointer group transition-all duration-300 ease-in-out' : 'flex-1 relative overflow-hidden';
+        const contentExtraClass = isEfficiency ? 'opacity-30 group-hover:opacity-100 transition-opacity duration-300' : '';
+        const toggleIcon = isEfficiency ? '<svg class="w-5 h-5 text-gray-500 absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>' : '';
 
-                <div class="grid grid-cols-3 gap-2 text-center h-full items-center">
+        const inner = k.bar
+            ? `<div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden mt-2"><div id="bar-${k.id}" class="h-full transition-all duration-500" style="width:${Math.min(100, (k.base / k.barMax) * 100).toFixed(0)}%; background:${k.color}"></div></div>`
+            : `<span class="text-[10px] mt-1 ${contentExtraClass}" style="color:${k.sublabelColor || '#6b7280'}">${k.sublabel || ''}</span>`;
+
+        return `<div class="scada-card p-4 flex flex-col justify-between ${cardExtraClass}">
+            ${toggleIcon}
+            <div class="text-xs text-gray-400 font-semibold tracking-wider ${contentExtraClass}">${k.label}</div>
+            <div class="flex justify-between items-baseline mt-1 ${contentExtraClass}">
+                <span id="kpi-${k.id}" class="text-3xl font-bold font-digital tracking-tight" style="color:${k.color}">${displayVal}</span>
+                <span class="text-sm font-digital" style="color:${k.color}">${k.unit}</span>
+            </div>
+            ${inner}
+        </div>`;
+    }).join('');
+
+    // Reordenar el contenedor principal para que las tarjetas flotantes se superpongan correctamente
+    container.style.position = 'relative';
+}
+ 
+        function renderIndicatorsPanel(mode) {
+            const titleEl = document.getElementById('indicators-title');
+            const container = document.getElementById('indicators-content');
+ 
+            if (mode.panelType === 'equivalence') {
+                titleEl.innerHTML = '<span>//</span> Indicadores principales';
+                container.innerHTML = `<div class="grid grid-cols-3 gap-2 text-center h-full items-center">
                     <div class="flex flex-col items-center border-r border-[#30363d] px-1">
                         <span class="text-xs text-cyan-400 font-semibold mb-1">AGUA</span>
                         <span id="eq-water" class="text-md font-bold text-white font-digital">1.0 m³</span>
@@ -212,198 +343,242 @@
                         <span id="eq-cost" class="text-md font-bold text-[#39ff14] font-digital">$215</span>
                         <span class="text-[10px] text-gray-500">mxn.</span>
                     </div>
-                </div>
-            </div>
-
-            <div class="scada-card p-4 h-[22%] flex flex-col overflow-hidden">
-                <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase mb-2 flex justify-between">
-                    <span>// PANEL DE ALERTAS</span>
-                    <span class="text-[#ff1744] animate-pulse font-digital text-[10px]">LIVE</span>
-                </h2>
-                <div class="overflow-y-auto flex flex-col gap-2 flex-1 presentation-mode-zone">
-                    <div class="blink-red border border-[#ff1744] bg-[rgba(255,23,68,0.05)] rounded p-2 flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[#ff1744] font-bold">⚠️ CRIT</span>
-                            <span class="text-gray-300">Consumo anormal detectado en cuarto de servicio</span>
+                </div>`;
+            } else if (mode.panelType === 'areas') {
+                titleEl.innerHTML = '<span>//</span> Consumo por Área / Piso';
+                container.innerHTML = `<div class="flex flex-col gap-2 h-full overflow-y-auto pr-1">
+                    ${mode.areas.map(a => `
+                        <div class="flex flex-col gap-0.5">
+                            <div class="flex justify-between items-center text-[11px]">
+                                <span class="text-gray-300">${a.name}</span>
+                                <span id="area-val-${a.id}" class="font-digital font-semibold" style="color:#00f2fe">${a.base.toFixed(1)} ${a.unit}</span>
+                            </div>
+                            <div class="w-full bg-gray-800 h-1 rounded-full overflow-hidden">
+                                <div id="area-bar-${a.id}" class="h-full transition-all duration-500" style="width:${Math.min(100, (a.base / a.threshold) * 100).toFixed(0)}%; background:#00f2fe"></div>
+                            </div>
                         </div>
-                        <span class="text-gray-500 font-digital">11:42</span>
+                    `).join('')}
+                </div>`;
+            } else if (mode.panelType === 'wue') {
+                titleEl.innerHTML = '<span>//</span> Eficiencia Hídrica del Data Center';
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-full gap-1">
+                    <span class="text-[10px] text-gray-500 tracking-wider">WUE — WATER USAGE EFFECTIVENESS</span>
+                    <div class="flex items-baseline gap-1">
+                        <span id="wue-value" class="text-4xl font-bold font-digital" style="color:#39ff14">${mode.wue.base.toFixed(3)}</span>
+                        <span class="text-sm text-gray-500 font-digital">L/kWh</span>
                     </div>
-                    <div class="border border-[#ff9100] bg-[rgba(255,145,0,0.05)] rounded p-2 flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-2">
-                            <span class="text-[#ff9100] font-bold">⚡ WARN</span>
-                            <span class="text-gray-300">Presión elevada en Bomba Principal</span>
-                        </div>
-                        <span class="text-gray-500 font-digital">10:15</span>
+                    <span id="wue-status" class="text-xs font-semibold" style="color:#39ff14">ÓPTIMO</span>
+                    <div class="flex gap-4 mt-2 text-[10px] text-gray-400 font-digital">
+                        <div>AGUA REPOS.: <span id="wue-water" class="text-cyan-400">—</span></div>
+                        <div>CARGA IT: <span id="wue-energy" class="text-orange-400">—</span></div>
                     </div>
-                </div>
-            </div>
-
-        </section>
-
-        <section class="w-[72%] flex flex-col justify-between h-full gap-4">
-
-            <div class="scada-card h-[63%] relative overflow-hidden flex flex-col">
-                <div class="absolute top-3 left-4 z-10 bg-[rgba(10,13,20,0.85)] border border-[#30363d] px-3 py-1 rounded text-xs flex items-center gap-2 backdrop-blur-sm">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                    <span class="text-gray-400 font-semibold tracking-wider">VISTA 3D: DIGITAL TWIN DE LA INSTALACIÓN</span>
-                </div>
-
-                <div class="w-full h-full flex-1">
-                    <iframe src="https://3dwarehouse.sketchup.com/embed/c952365c-d83c-4592-be59-3189f375887d?token=SiKoPSkQb54=&binaryName=s21"
-                        frameborder="0"
-                        scrolling="no"
-                        marginheight="0"
-                        marginwidth="0"
-                        class="w-full h-full border-0"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-            </div>
-
-            <div class="scada-card h-[37%] p-4 flex flex-col justify-between">
-                <div class="flex justify-between items-center mb-1">
-                    <h2 class="text-xs font-bold tracking-widest text-gray-400 uppercase"><span>//</span> HISTÓRICO DE CONSUMO DIARIO (L/s por Hora)</h2>
-                    <div class="flex gap-4 text-[11px] text-gray-400 font-digital">
-                        <div>MÁX: <span class="text-cyan-400">54.2 L/s</span></div>
-                        <div>MÍN: <span class="text-gray-400">28.9 L/s</span></div>
-                        <div>PROM: <span class="text-emerald-400">41.1 L/s</span></div>
-                    </div>
-                </div>
-                <div class="flex-1 w-full relative min-h-0">
-                    <canvas id="historicalChart"></canvas>
-                </div>
-            </div>
-
-        </section>
-
-    </main>
-
-    <script>
-        // --- 0. LÓGICA DEL POPUP DE BIENVENIDA ---
-        const overlay = document.getElementById('welcome-overlay');
-        document.getElementById('btn-res').addEventListener('click', () => {
-            overlay.style.display = 'none';
-        });
-
-        // --- 1. CONFIGURACIÓN DEL RELOJ EN TIEMPO REAL ---
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toTimeString().split(' ')[0];
-            document.getElementById('live-clock').textContent = timeString;
+                </div>`;
+            }
         }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-// --- 2. CONFIGURACIÓN DE CHART.JS (Gráfico Histórico con Gradiente Glow) ---
-const ctx = document.getElementById('historicalChart').getContext('2d');
-
-// Creación del Gradiente para el Efecto Glow inferior
-const gradient = ctx.createLinearGradient(0, 0, 0, 180);
-gradient.addColorStop(0, 'rgba(0, 242, 254, 0.3)');
-gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
-
-// Datos Iniciales
-const labels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
-const dataValues = [32, 29, 31, 45, 52, 48, 42, 46, 49, 41, 38, 35];
-
-const historicalChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: labels,
-        datasets: [{
-            label: 'Flujo de Agua',
-            data: dataValues,
-            borderColor: '#00f2fe',
-            borderWidth: 2,
-            pointBackgroundColor: '#00f2fe',
-            pointBorderColor: '#0a0d14',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: '#00f2fe',
-            pointRadius: 3,
-            tension: 0.4,
-            fill: true,
-            backgroundColor: gradient
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            // AQUI ESTA LA CONFIGURACION DE ZOOM CORRECTA
-            zoom: {
-                zoom: {
-                    wheel: { enabled: true },
-                    pinch: { enabled: true },
-                    mode: 'x',
+ 
+        function renderAlerts(mode) {
+            const container = document.getElementById('alerts-list');
+            container.innerHTML = mode.alerts.map(a => {
+                const isCrit = a.level === 'CRIT';
+                const cardCls = isCrit ? 'blink-red border-[#ff1744] bg-[rgba(255,23,68,0.05)]' : 'border-[#ff9100] bg-[rgba(255,145,0,0.05)]';
+                const icon = isCrit ? '⚠️ CRIT' : '⚡ WARN';
+                const color = isCrit ? '#ff1744' : '#ff9100';
+                return `<div class="border rounded p-2 flex items-center justify-between text-xs ${cardCls}">
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold" style="color:${color}">${icon}</span>
+                        <span class="text-gray-300">${a.text}</span>
+                    </div>
+                    <span class="text-gray-500 font-digital">${a.time}</span>
+                </div>`;
+            }).join('');
+        }
+ 
+        // ============================================================
+        // 3. GRÁFICO HISTÓRICO
+        // ============================================================
+        function initChart(mode) {
+            if (historicalChart) { historicalChart.destroy(); }
+            const ctx = document.getElementById('historicalChart').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 180);
+            gradient.addColorStop(0, 'rgba(0, 242, 254, 0.3)');
+            gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
+ 
+            const labels = ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00', '22:00'];
+ 
+            historicalChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: mode.chartLabel,
+                        data: [...mode.historicalData],
+                        borderColor: '#00f2fe',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#00f2fe',
+                        pointBorderColor: '#0a0d14',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00f2fe',
+                        pointRadius: 3,
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: gradient
+                    }]
                 },
-                pan: {
-                    enabled: true,
-                    mode: 'x',
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        zoom: {
+                            zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'x' },
+                            pan: { enabled: true, mode: 'x' }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { color: '#1f2937', drawTicks: false }, ticks: { color: '#9ca3af', font: { family: 'Rajdhani', size: 11 } } },
+                        y: { grid: { color: '#1f2937', drawTicks: false }, ticks: { color: '#9ca3af', font: { family: 'Orbitron', size: 10 } }, min: mode.chartYMin, max: mode.chartYMax }
+                    }
                 }
-            }
-        },
-        scales: {
-            x: {
-                grid: { color: '#1f2937', drawTicks: false },
-                ticks: { color: '#9ca3af', font: { family: 'Rajdhani', size: 11 } }
-            },
-            y: {
-                grid: { color: '#1f2937', drawTicks: false },
-                ticks: { color: '#9ca3af', font: { family: 'Orbitron', size: 10 } },
-                min: 20,
-                max: 65
+            });
+ 
+            document.getElementById('chart-title').innerHTML = `<span>//</span> ${mode.chartLabel}`;
+            const max = Math.max(...mode.historicalData).toFixed(1);
+            const min = Math.min(...mode.historicalData).toFixed(1);
+            const avg = (mode.historicalData.reduce((s, v) => s + v, 0) / mode.historicalData.length).toFixed(1);
+            document.getElementById('stat-max').textContent = `${max} ${mode.chartUnit}`;
+            document.getElementById('stat-min').textContent = `${min} ${mode.chartUnit}`;
+            document.getElementById('stat-avg').textContent = `${avg} ${mode.chartUnit}`;
+        }
+ 
+        // ============================================================
+        // 4. SIMULACIÓN DE DATOS VIVOS
+        // ============================================================
+        function updateKPIs(mode) {
+            mode.kpis.forEach(k => {
+                const decimals = k.decimals ?? 1;
+                let val;
+                if (k.accumulate) {
+                    const driver = liveValues[k.driverId] ?? 0;
+                    val = (liveValues[k.id] ?? k.base) + (driver / 1000);
+                } else {
+                    val = k.base + (Math.random() * 2 - 1) * k.variance;
+                    if (val < 0) val = 0;
+                }
+                liveValues[k.id] = val;
+ 
+                const el = document.getElementById('kpi-' + k.id);
+                if (el) {
+                    el.textContent = k.accumulate
+                        ? val.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+                        : val.toFixed(decimals);
+                }
+                if (k.bar) {
+                    const barEl = document.getElementById('bar-' + k.id);
+                    if (barEl) barEl.style.width = Math.min(100, (val / k.barMax) * 100).toFixed(0) + '%';
+                }
+            });
+        }
+ 
+        function updateIndicators(mode) {
+            if (mode.panelType === 'equivalence') {
+                const flow = liveValues['flow'] ?? 0;
+                const waterUnit = flow / 40;
+                const waterEl = document.getElementById('eq-water');
+                const energyEl = document.getElementById('eq-energy');
+                const costEl = document.getElementById('eq-cost');
+                if (waterEl) waterEl.textContent = `${waterUnit.toFixed(2)} m³`;
+                if (energyEl) energyEl.textContent = `${(waterUnit * 0.45).toFixed(2)} kW`;
+                if (costEl) costEl.textContent = `$${(215 + (flow - 40) * 5).toFixed(2)}`;
+ 
+            } else if (mode.panelType === 'areas') {
+                mode.areas.forEach(a => {
+                    let v = a.base + (Math.random() * 2 - 1) * a.variance;
+                    if (v < 0) v = 0;
+                    a.value = v;
+ 
+                    const status = v > a.threshold ? 'critical' : v > a.threshold * 0.85 ? 'warning' : 'normal';
+                    const color = status === 'critical' ? '#ff1744' : status === 'warning' ? '#ff9100' : '#00f2fe';
+                    const pct = Math.min(100, (v / a.threshold) * 100).toFixed(0);
+ 
+                    const bar = document.getElementById('area-bar-' + a.id);
+                    const valEl = document.getElementById('area-val-' + a.id);
+                    if (bar) { bar.style.width = pct + '%'; bar.style.background = color; }
+                    if (valEl) { valEl.textContent = `${v.toFixed(1)} ${a.unit}`; valEl.style.color = color; }
+                });
+ 
+            } else if (mode.panelType === 'wue') {
+                let w = mode.wue.base + (Math.random() * 2 - 1) * mode.wue.variance;
+                if (w < 0.1) w = 0.1;
+                liveValues['wue'] = w;
+ 
+                let color = '#39ff14', statusText = 'ÓPTIMO';
+                if (w > 0.6) { color = '#ff1744'; statusText = 'ALTO'; }
+                else if (w > 0.45) { color = '#ff9100'; statusText = 'ACEPTABLE'; }
+ 
+                const valEl = document.getElementById('wue-value');
+                const statusEl = document.getElementById('wue-status');
+                const waterEl = document.getElementById('wue-water');
+                const energyEl = document.getElementById('wue-energy');
+                if (valEl) { valEl.textContent = w.toFixed(3); valEl.style.color = color; }
+                if (statusEl) { statusEl.textContent = statusText; statusEl.style.color = color; }
+                if (waterEl) waterEl.textContent = `${((liveValues['makeup'] ?? 0) * 3.6).toFixed(1)} L/h`;
+                if (energyEl) energyEl.textContent = `${(liveValues['itload'] ?? 0).toFixed(0)} kW`;
             }
         }
-    }
-});
-
-        // --- 3. SIMULACIÓN DE DATOS VIVOS EN TIEMPO REAL (setInterval) ---
-        let baseVolume = 1248.3;
-        let elapsedSeconds = 0;
-
-        setInterval(() => {
-            // A. Simulación de Fluctuación de flujo (L/s)
-            const currentFlow = (40 + (Math.random() * 6 - 3)).toFixed(1);
-            document.getElementById('kpi-flow').textContent = currentFlow;
-
-            // Ajustar dinámicamente la barra visual de progreso del flujo
-            const percentFlow = ((currentFlow / 65) * 100).toFixed(0);
-            document.getElementById('bar-flow').style.width = `${percentFlow}%`;
-
-            // B. Incremento acumulado del volumen diario
-            // Suma una cantidad proporcional simulada cada segundo
-            baseVolume += (parseFloat(currentFlow) / 1000);
-            document.getElementById('kpi-volume').textContent = baseVolume.toLocaleString('en-US', {minimumFractionDigits: 1, maximumFractionDigits: 1});
-
-            // C. Variación sutil de la eficiencia global (%)
-            const currentEfficiency = (96.5 + (Math.random() * 0.6 - 0.3)).toFixed(1);
-            document.getElementById('kpi-efficiency').textContent = currentEfficiency;
-
-            // D. Actualización Dinámica del Módulo de Conversión en base al Flujo Actual
-            // Suponemos que 1 m3/s requiere cierta potencia y genera un coste
-            const waterUnit = (parseFloat(currentFlow) / 40).toFixed(2);
-            document.getElementById('eq-water').textContent = `${waterUnit} m³`;
-            document.getElementById('eq-energy').textContent = `${(waterUnit * 0.45).toFixed(2)} kW`;
-            const costoBase = 215;
-            const variacion = (currentFlow - 40) * 5; // Ajusta el 5 según qué tanto quieras que varíe
-            document.getElementById('eq-cost').textContent = `$${(costoBase + variacion).toFixed(2)}`;
-
-            // E. Modificar en tiempo real el último punto del gráfico de Chart.js para dar sensación de dinamismo vivo
-            const lastIndex = historicalChart.data.datasets[0].data.length - 1;
-            historicalChart.data.datasets[0].data[lastIndex] = parseFloat(currentFlow);
-            historicalChart.update('none'); // Update sin reiniciar animación para fluidez
-
-            // F. Contador de sincronización
+ 
+        function tick() {
+            const mode = MODES[currentMode];
+            updateKPIs(mode);
+            updateIndicators(mode);
+ 
+            const chartVal = liveValues[mode.chartKpi];
+            if (historicalChart && chartVal !== undefined) {
+                const lastIndex = historicalChart.data.datasets[0].data.length - 1;
+                historicalChart.data.datasets[0].data[lastIndex] = parseFloat(chartVal.toFixed(2));
+                historicalChart.update('none');
+            }
             elapsedSeconds = 0;
-        }, 2000);
-
-        // Actualizador del letrero de refresco de telemetría por segundo
+        }
+        setInterval(tick, 2000);
+ 
         setInterval(() => {
             elapsedSeconds += 0.5;
             document.getElementById('sync-time').textContent = `${elapsedSeconds.toFixed(1)}s ago`;
         }, 500);
-
+ 
+        // ============================================================
+        // 5. SELECCIÓN DE MODO / CASO DE USO
+        // ============================================================
+        function selectMode(key) {
+            currentMode = key;
+            const mode = MODES[key];
+            liveValues = {};
+ 
+            document.getElementById('mode-badge').textContent = mode.label;
+            document.getElementById('viewer-iframe').src = mode.iframe;
+ 
+            mode.kpis.forEach(k => { liveValues[k.id] = k.base; });
+            if (mode.wue) liveValues['wue'] = mode.wue.base;
+            if (mode.areas) mode.areas.forEach(a => { a.value = a.base; });
+ 
+            renderKPICards(mode);
+            renderIndicatorsPanel(mode);
+            renderAlerts(mode);
+            initChart(mode);
+            updateIndicators(mode);
+        }
+ 
+        // ============================================================
+        // 6. EVENTOS DEL POPUP DE BIENVENIDA
+        // ============================================================
+        const overlay = document.getElementById('welcome-overlay');
+        document.getElementById('btn-res').addEventListener('click', () => { selectMode('residencial'); overlay.style.display = 'none'; });
+        document.getElementById('btn-com').addEventListener('click', () => { selectMode('comercial'); overlay.style.display = 'none'; });
+        document.getElementById('btn-ind').addEventListener('click', () => { selectMode('industrial'); overlay.style.display = 'none'; });
+        document.getElementById('btn-reopen').addEventListener('click', () => { overlay.style.display = 'flex'; });
+ 
+        // Inicializa el dashboard con el modo residencial por defecto (debajo del popup)
+        selectMode('residencial');
     </script>
 </body>
 </html>

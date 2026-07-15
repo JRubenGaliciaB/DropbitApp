@@ -6,9 +6,11 @@
     <title>Dropbit - Digital Twin Water Management SCADA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    
 
     <style>
         /* Estilos personalizados para la estética Dark Tech / SCADA Premium */
@@ -292,8 +294,34 @@
         setInterval(updateClock, 1000);
         updateClock();
 
-        // --- 2. CONFIGURACIÓN DE CHART.JS (Gráfico Histórico con Gradiente Glow) ---
-        const ctx = document.getElementById('historicalChart').getContext('2d');
+// --- 2. CONFIGURACIÓN DE CHART.JS ---
+const ctx = document.getElementById('historicalChart').getContext('2d');
+// ... (tu código del gradiente se mantiene igual)
+
+const historicalChart = new Chart(ctx, {
+    type: 'line',
+    data: { /* tus datos */ },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: { display: false },
+            // AQUÍ AGREGAS LA NAVEGABILIDAD
+            zoom: {
+                zoom: {
+                    wheel: { enabled: true }, // Zoom con scroll
+                    pinch: { enabled: true }, // Zoom con dedos en touch
+                    mode: 'x',              // Solo zoom horizontal
+                },
+                pan: {
+                    enabled: true,          // Arrastrar el gráfico
+                    mode: 'x',              // Solo movimiento horizontal
+                }
+            }
+        },
+        scales: { /* tus escalas */ }
+    }
+});
 
         // Creación del Gradiente para el Efecto Glow inferior
         const gradient = ctx.createLinearGradient(0, 0, 0, 180);

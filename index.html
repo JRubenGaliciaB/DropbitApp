@@ -371,7 +371,9 @@
             const waterUnit = (parseFloat(currentFlow) / 40).toFixed(2);
             document.getElementById('eq-water').textContent = `${waterUnit} m³`;
             document.getElementById('eq-energy').textContent = `${(waterUnit * 0.45).toFixed(2)} kW`;
-            document.getElementById('eq-cost').textContent = `$${(waterUnit * 2.15).toFixed(2)}`;
+            const costoBase = 215;
+            const variacion = (currentFlow - 40) * 5; // Ajusta el 5 según qué tanto quieras que varíe
+            document.getElementById('eq-cost').textContent = `$${(costoBase + variacion).toFixed(2)}`;
 
             // E. Modificar en tiempo real el último punto del gráfico de Chart.js para dar sensación de dinamismo vivo
             const lastIndex = historicalChart.data.datasets[0].data.length - 1;

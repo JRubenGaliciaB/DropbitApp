@@ -99,21 +99,36 @@
 <body class="p-4 flex flex-col justify-between h-screen gap-4">
  
     <!-- Popup de bienvenida / selección de caso -->
-    <div id="welcome-overlay">
-        <div class="popup-card">
-            <img src="https://i.ibb.co/9Hp3V107/Dropbit-blanco.png" alt="Dropbit Logo" class="mx-auto mb-4 w-40">
-            <h2 class="text-xl font-bold text-gray-800 mb-4">App DEMO</h2>
-            <p class="text-xs text-gray-600 mb-6 leading-relaxed">
-                Bienvenido al futuro de la eficiencia hídrica. Con la inteligencia artificial y los sensores IoT de Dropbit, controla tu red en tiempo real, detecta fugas antes de que ocurran y asegura la continuidad de tu operación desde tu gemelo digital.
-            </p>
- 
-            <p class="text-xs font-bold text-gray-800 mb-3">Conoce nuestros casos de uso</p>
- 
-            <button class="btn-option" id="btn-res">Residencial</button>
-            <button class="btn-option" id="btn-com">Comercial</button>
-            <button class="btn-option" id="btn-ind">Industrial (Data Center)</button>
+    <div id="welcome-overlay" class="flex items-center justify-center p-4">
+    <div class="popup-card text-center max-w-lg w-full">
+        <img src="https://i.ibb.co/9Hp3V107/Dropbit-blanco.png" alt="Dropbit Logo" class="mx-auto mb-4 w-40">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">App DEMO</h2>
+        <p class="text-xs text-gray-600 mb-6 leading-relaxed">
+            Bienvenido al futuro de la eficiencia hídrica. Con la inteligencia artificial y los sensores IoT de Dropbit, controla tu red en tiempo real, detecta fugas antes de que ocurran y asegura la continuidad de tu operación desde tu gemelo digital.
+        </p>
+
+        <div class="grid grid-cols-2 gap-6 items-start">
+            
+            <div class="flex flex-col items-center">
+                <p class="text font-bold text-gray-800 mb-3 whitespace-nowrap ">Expora nuestros<br>casos de uso</p>
+                <div class="flex flex-col gap-2 w-full">
+                    <button class="btn-option w-full" id="btn-res">Residencial</button>
+                    <button class="btn-option w-full" id="btn-com">Comercial</button>
+                    <button class="btn-option w-full" id="btn-ind">Industrial</button>
+                </div>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <p class="text font-bold text-gray-800 mb-3 whitespace-nowrap">Conoce nuestros<br>sensores IoT</p>
+                <div class="flex flex-col gap-2 w-full">
+                    <button class="btn-option w-full" id="btn-elec">Electromagnético</button>
+                    <button class="btn-option w-full" id="btn-acel">Acelerómetro</button>
+                </div>
+            </div>
+
         </div>
     </div>
+</div>
  
     <header class="h-[6vh] scada-card flex items-center justify-between px-6 border-b border-[#30363d]">
         <div class="flex items-center gap-3">

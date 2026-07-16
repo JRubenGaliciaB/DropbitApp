@@ -377,7 +377,7 @@ function renderKPICards(mode) {
             } else if (mode.panelType === 'wue') {
                 titleEl.innerHTML = '<span>//</span> Eficiencia Hídrica del Data Center';
                 container.innerHTML = `<div class="flex flex-col items-center justify-center h-full gap-1">
-                    <span class="text-[10px] text-gray-500 tracking-wider">WUE — WATER USAGE EFFECTIVENESS</span>
+                    <span class="text-[15px] text-blue-500 tracking-wider">WUE — WATER USAGE EFFECTIVENESS</span>
                     <div class="flex items-baseline gap-1">
                         <span id="wue-value" class="text-4xl font-bold font-digital" style="color:#39ff14">${mode.wue.base.toFixed(3)}</span>
                         <span class="text-sm text-gray-500 font-digital">L/kWh</span>

@@ -597,9 +597,14 @@ function renderKPICards(mode) {
         document.getElementById('video-popup').classList.remove('hidden');
         });
 
+        document.getElementById('btn-acel').addEventListener('click', () => {
+        document.getElementById('video-popup2').classList.remove('hidden');
+        });
+
         // Función para cerrar el popup
         function closeVideo() {
         document.getElementById('video-popup').classList.add('hidden');
+        document.getElementById('video-popup2').classList.add('hidden');
         // Opcional: Detener el video al cerrar (recarga el src)
         const iframe = document.querySelector('#video-popup iframe');
         iframe.src = iframe.src; 
@@ -615,8 +620,19 @@ function renderKPICards(mode) {
         <button onclick="closeVideo()" class="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 rounded-full w-8 h-8 flex items-center justify-center z-10 text-xl font-bold">×</button>
         
         <div style="padding:56.25% 0 0 0; position:relative;">
-            <iframe src="https://player.vimeo.com/video/1210418062?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Sensor01video"></iframe>
+           <iframe src="https://player.vimeo.com/video/1210418062?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Sensor01video"></iframe>
         </div>
+    </div>
+</div>
+
+
+<div id="video-popup2" class="hidden fixed inset-0 z-[10001] flex items-center justify-center bg-black/80 p-4">
+    <div class="relative w-full max-w-4xl bg-black rounded-lg overflow-hidden shadow-2xl border border-gray-700">
+        <button onclick="closeVideo()" class="absolute top-2 right-2 text-white bg-red-600 hover:bg-red-700 rounded-full w-8 h-8 flex items-center justify-center z-10 text-xl font-bold">×</button>
+        
+        <div style="padding:56.25% 0 0 0; position:relative;">
+          <iframe src="https://player.vimeo.com/video/1210428487?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479&amp;autoplay=1&amp;muted=1&amp;loop=1" frameborder="0" allow="autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media; web-share" referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;top:0;left:0;width:100%;height:100%;" title="Sensor02.1video"></iframe>
+          </div>
     </div>
 </div>
     
